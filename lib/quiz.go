@@ -58,6 +58,20 @@ func Quiz(questions *[]Question) {
 		shuffleSlice(questions)
 	}
 
+	// print out the quiz result and kill the program
+	printResultAndExit := func() {
+
+		// print out the total score and the score in %
+		fmt.Printf(
+			"\n\nTIMES UP!\nYour score: %v/%v (%v%%)\n\n",
+			score,
+			len(*questions),
+			getPercentage(score, len(*questions)))
+
+		// exit program
+		os.Exit(2)
+	}
+
 	// start timer using a new goroutine
 	// once the given timer has passed
 	// print out the result of the quiz
@@ -67,16 +81,7 @@ func Quiz(questions *[]Question) {
 		// update the timer every sec, going from start -> 0
 		timeChan := time.NewTimer(time.Duration(timeLimit) * time.Second)
 		<-timeChan.C
-
-		// print out the total score and the score in %
-		fmt.Printf(
-			"\n\nTIMES UP!\nYour score: %v/%v (%v%%)\n\n",
-			score,
-			len(*questions),
-			getPercentage(score, len(*questions)))
-
-		// cleanup and exit program
-		os.Exit(2)
+		printResultAndExit()
 	}()
 
 	// iterate over all the questions and print
@@ -97,6 +102,8 @@ func Quiz(questions *[]Question) {
 
 		fmt.Println("\n------------------------------")
 	}
+
+	printResultAndExit()
 }
 
 func setTimer() int {
