@@ -5,15 +5,19 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
 
-const message string = `
+const (
+	message string = `
 ////////////////////////////////////////
 // Welcome to the amazing quiz game! //
 //////////////////////////////////////
 `
+	defaultTimeLimit = 30
+)
 
 // Quiz starts the quiz and print out the new question
 // after each guess, accumulating the total score
@@ -26,8 +30,24 @@ func Quiz(questions *[]Question) {
 	// initialize a new reader
 	reader := bufio.NewReader(os.Stdin)
 
-	// initialize score
-	var score int
+	// initialize score & timer
+	score, timeLimit := 0, defaultTimeLimit
+
+	// ask if timer should be changed from default (30s)
+	fmt.Printf("Would you like to change the quiz time limt? (%vs)", defaultTimeLimit)
+	timer, _ := reader.ReadString('\n')
+	timer = trimString(&timer)
+
+	// validate input for timer
+	// if not a valid num in secs, set default
+	// else set the recieved value as limit
+	time, err := strconv.Atoi(timer)
+	if err == nil {
+		timeLimit = time
+		fmt.Print(timeLimit)
+	} else {
+		fmt.Printf("Invalid time input. Default time (%v) has been set\n", defaultTimeLimit)
+	}
 
 	// ask if questions should be shuffeled
 	fmt.Print("Would you like to shuffle the questions? (yes/no): ")
@@ -83,7 +103,7 @@ func trimString(input *string) string {
 // original slice in 0(n)
 func shuffleSlice(q *[]Question) {
 
-	// set the seed for randomnezzz
+	// set the seed for different randomness each call to shuffleSlice
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	for i := 0; i < len(*q); i++ {
