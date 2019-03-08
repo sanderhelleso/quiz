@@ -37,5 +37,15 @@ func Quiz(questions *[]Question) {
 		fmt.Println("\n------------------------------")
 	}
 
-	fmt.Printf("Total score: %v\n", score)
+	// print out the total score and the score in %
+	fmt.Printf(
+		"Your score: %v/%v (%v%%)\n",
+		score,
+		len(*questions),
+		getPercentage(score, len(*questions)))
+}
+
+// getPercentage returns the percentage of total by max
+func getPercentage(total int, max int) int {
+	return int(float64(total) / float64(max) * 100)
 }
