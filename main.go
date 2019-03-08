@@ -1,8 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"./lib"
+)
+
+const csvFile string = "problems.csv"
 
 func main() {
 
-	fmt.Println("Hello world")
+	lib.ReadCSV(csvFile)
 }
