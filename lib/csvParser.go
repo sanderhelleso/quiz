@@ -9,9 +9,19 @@ import (
 	"path/filepath"
 )
 
-// ReadCSV takes in a gived filepath and reads the csv
-// data from the given file
-func ReadCSV(filePath string) {
+// Question represent a quiz question
+// with its corresponding answer
+type Question struct {
+	question string
+	answer   string
+}
+
+// GetQuestionsFromCSV takes in a giveN filepath and reads the csv
+// data from the given file, returns a slice of Questions
+func GetQuestionsFromCSV(filePath string) []Question {
+
+	// initialize questions array
+	var questions []Question
 
 	// open file using recieved filepath & handle potenisal error
 	file, err := os.Open(filePath)
@@ -34,7 +44,16 @@ func ReadCSV(filePath string) {
 			break
 		}
 
-		// print record
-		fmt.Println(record)
+		// create new question
+		var question = Question{
+			record[0],
+			record[1],
+		}
+
+		// add question to slice of questions
+		questions = append(questions, question)
 	}
+
+	// return slice of questions retrieved fro array
+	return questions
 }

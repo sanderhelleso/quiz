@@ -8,5 +8,7 @@ const csvFile string = "problems.csv"
 
 func main() {
 
-	lib.ReadCSV(csvFile)
+	// get quiz questions
+	quizQuestions := lib.GetQuestionsFromCSV(csvFile)
+	lib.Quiz(&quizQuestions)
 }
