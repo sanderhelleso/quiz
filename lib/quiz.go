@@ -76,7 +76,7 @@ func Quiz(questions *[]Question) {
 			getPercentage(score, len(*questions)))
 
 		// exit program
-		os.Exit(2)
+		os.Exit(0)
 	}
 
 	// start timer using a new goroutine
