@@ -34,17 +34,16 @@ func Quiz(questions *[]Question) {
 	score, timeLimit := 0, defaultTimeLimit
 
 	// ask if timer should be changed from default (30s)
-	fmt.Printf("Would you like to change the quiz time limt? (%vs)", defaultTimeLimit)
+	fmt.Printf("Enter a valid quiz time limt, in seconds? (%vs)", defaultTimeLimit)
 	timer, _ := reader.ReadString('\n')
 	timer = trimString(&timer)
 
 	// validate input for timer
 	// if not a valid num in secs, set default
 	// else set the recieved value as limit
-	time, err := strconv.Atoi(timer)
+	newTime, err := strconv.Atoi(timer)
 	if err == nil {
-		timeLimit = time
-		fmt.Print(timeLimit)
+		timeLimit = newTime
 	} else {
 		fmt.Printf("Invalid time input. Default time (%v) has been set\n", defaultTimeLimit)
 	}
@@ -58,6 +57,27 @@ func Quiz(questions *[]Question) {
 	if strings.Compare(shouldShuffle, "yes") == 0 {
 		shuffleSlice(questions)
 	}
+
+	// start timer using a new goroutine
+	// once the given timer has passed
+	// print out the result of the quiz
+	// and gracefully exit the program
+	go func() {
+
+		// update the timer every sec, going from start -> 0
+		timeChan := time.NewTimer(time.Duration(timeLimit) * time.Second)
+		<-timeChan.C
+
+		// print out the total score and the score in %
+		fmt.Printf(
+			"\n\nTIMES UP!\nYour score: %v/%v (%v%%)\n\n",
+			score,
+			len(*questions),
+			getPercentage(score, len(*questions)))
+
+		// cleanup and exit program
+		os.Exit(2)
+	}()
 
 	// iterate over all the questions and print
 	// each question one by one and wait for answer
@@ -77,13 +97,6 @@ func Quiz(questions *[]Question) {
 
 		fmt.Println("\n------------------------------")
 	}
-
-	// print out the total score and the score in %
-	fmt.Printf(
-		"Your score: %v/%v (%v%%)\n",
-		score,
-		len(*questions),
-		getPercentage(score, len(*questions)))
 }
 
 func setTimer() int {
