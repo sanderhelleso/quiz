@@ -34,7 +34,7 @@ func Quiz(questions *[]Question) {
 	score, timeLimit := 0, defaultTimeLimit
 
 	// ask if timer should be changed from default (30s)
-	fmt.Printf("Enter a valid quiz time limt, in seconds? (%vs)", defaultTimeLimit)
+	fmt.Printf("Enter a valid quiz time limt, in seconds? (%vs): ", defaultTimeLimit)
 	timer, _ := reader.ReadString('\n')
 	timer = trimString(&timer)
 
@@ -59,11 +59,18 @@ func Quiz(questions *[]Question) {
 	}
 
 	// print out the quiz result and kill the program
-	printResultAndExit := func() {
+	printResultAndExit := func(timeOver bool) {
+
+		// print "game over" message depending on case
+		if timeOver {
+			fmt.Println("\n\nTIMES UP!")
+		} else {
+			fmt.Println("\n\nOUT OF QUESTIONS!")
+		}
 
 		// print out the total score and the score in %
 		fmt.Printf(
-			"\n\nTIMES UP!\nYour score: %v/%v (%v%%)\n\n",
+			"Your score: %v/%v (%v%%)\n\n",
 			score,
 			len(*questions),
 			getPercentage(score, len(*questions)))
@@ -81,7 +88,7 @@ func Quiz(questions *[]Question) {
 		// update the timer every sec, going from start -> 0
 		timeChan := time.NewTimer(time.Duration(timeLimit) * time.Second)
 		<-timeChan.C
-		printResultAndExit()
+		printResultAndExit(true)
 	}()
 
 	// iterate over all the questions and print
@@ -103,7 +110,7 @@ func Quiz(questions *[]Question) {
 		fmt.Println("\n------------------------------")
 	}
 
-	printResultAndExit()
+	printResultAndExit(false)
 }
 
 func setTimer() int {
